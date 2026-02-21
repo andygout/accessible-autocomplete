@@ -47,6 +47,7 @@ export default class Autocomplete extends Component {
     confirmOnBlur: true,
     showNoOptionsFound: true,
     showAllValues: false,
+    reopenOnFocusWhenValid: false,
     required: false,
     tNoResults: () => 'No results found',
     tAssistiveHint: () => 'When autocomplete results are available use up and down arrows to review and enter to select.  Touch device users, explore by touch or with swipe gestures.',
@@ -252,8 +253,11 @@ export default class Autocomplete extends Component {
 
   handleInputFocus (event) {
     const { query, validChoiceMade, options } = this.state
-    const { minLength } = this.props
-    const shouldReopenMenu = !validChoiceMade && query.length >= minLength && options.length > 0
+    const { minLength, reopenOnFocusWhenValid } = this.props
+    const shouldReopenMenu =
+      (!validChoiceMade || reopenOnFocusWhenValid) &&
+      query.length >= minLength &&
+      options.length > 0
 
     if (shouldReopenMenu) {
       this.setState(({ menuOpen }) => ({ focused: -1, menuOpen: shouldReopenMenu || menuOpen, selected: -1 }))
