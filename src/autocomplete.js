@@ -69,6 +69,7 @@ export default class Autocomplete extends Component {
       menuOpen: false,
       options: props.defaultValue ? [props.defaultValue] : [],
       query: props.defaultValue,
+      resolvedQuery: null,
       validChoiceMade: false,
       selected: null,
       ariaHint: true
@@ -235,6 +236,7 @@ export default class Autocomplete extends Component {
         this.setState({
           menuOpen: optionsAvailable,
           options,
+          resolvedQuery: query,
           selected: (autoselect && optionsAvailable) ? 0 : -1,
           validChoiceMade: false
         })
@@ -242,7 +244,8 @@ export default class Autocomplete extends Component {
     } else if (queryEmpty || !queryLongEnough) {
       this.setState({
         menuOpen: false,
-        options: []
+        options: [],
+        resolvedQuery: null
       })
     }
   }
@@ -431,15 +434,30 @@ export default class Autocomplete extends Component {
       hintClasses,
       menuClasses
     } = this.props
-    const { focused, hovered, menuOpen, options, query, selected, ariaHint, validChoiceMade } = this.state
+    const {
+      focused,
+      hovered,
+      menuOpen,
+      options,
+      query,
+      selected,
+      ariaHint,
+      validChoiceMade,
+      resolvedQuery
+    } = this.state
     const autoselect = this.hasAutoselect()
 
     const inputFocused = focused === -1
     const noOptionsAvailable = options.length === 0
     const queryNotEmpty = query.length !== 0
     const queryLongEnough = query.length >= minLength
-    const showNoOptionsFound = this.props.showNoOptionsFound &&
-      inputFocused && noOptionsAvailable && queryNotEmpty && queryLongEnough
+    const showNoOptionsFound =
+      this.props.showNoOptionsFound &&
+      inputFocused &&
+      noOptionsAvailable &&
+      queryNotEmpty &&
+      queryLongEnough &&
+      query === resolvedQuery
 
     const wrapperClassName = `${cssNamespace}__wrapper`
     const statusClassName = `${cssNamespace}__status`
